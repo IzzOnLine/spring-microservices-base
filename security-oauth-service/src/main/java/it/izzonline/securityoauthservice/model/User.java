@@ -42,29 +42,29 @@ public class User extends BasicEntity implements UserDetails {
 	@SequenceGenerator(name = "user_generator", sequenceName = "user_seq", allocationSize = 1)
 	private Integer id;
 
-	@ColumnTransformer(read = "pgp_sym_decrypt(" + "    username, " + "    current_setting('vam.cerberus')"
-			+ ")", write = "pgp_sym_encrypt( " + "    ?, " + "    current_setting('vam.cerberus')" + ") ")
+	@ColumnTransformer(read = "pgp_sym_decrypt(" + "    username, " + "    current_setting('encrypt.key')"
+			+ ")", write = "pgp_sym_encrypt( " + "    ?, " + "    current_setting('encrypt.key')" + ") ")
 	@Column(columnDefinition = "bytea", unique = true)
 	@Length(min = 5)
 	private String username;
 
-	@ColumnTransformer(read = "pgp_sym_decrypt(" + "    secret, " + "    current_setting('vam.cerberus')"
-			+ ")", write = "pgp_sym_encrypt( " + "    ?, " + "    current_setting('vam.cerberus')" + ") ")
+	@ColumnTransformer(read = "pgp_sym_decrypt(" + "    secret, " + "    current_setting('encrypt.key')"
+			+ ")", write = "pgp_sym_encrypt( " + "    ?, " + "    current_setting('encrypt.key')" + ") ")
 	@Column(columnDefinition = "bytea")
 	private String secret;
 
-	@ColumnTransformer(read = "pgp_sym_decrypt(" + "    name, " + "    current_setting('vam.cerberus')"
-			+ ")", write = "pgp_sym_encrypt( " + "    ?, " + "    current_setting('vam.cerberus')" + ") ")
+	@ColumnTransformer(read = "pgp_sym_decrypt(" + "    name, " + "    current_setting('encrypt.key')"
+			+ ")", write = "pgp_sym_encrypt( " + "    ?, " + "    current_setting('encrypt.key')" + ") ")
 	@Column(columnDefinition = "bytea")
 	private String name;
 
-	@ColumnTransformer(read = "pgp_sym_decrypt(" + "    email, " + "    current_setting('vam.cerberus')"
-			+ ")", write = "pgp_sym_encrypt( " + "    ?, " + "    current_setting('vam.cerberus')" + ") ")
+	@ColumnTransformer(read = "pgp_sym_decrypt(" + "    email, " + "    current_setting('encrypt.key')"
+			+ ")", write = "pgp_sym_encrypt( " + "    ?, " + "    current_setting('encrypt.key')" + ") ")
 	@Column(columnDefinition = "bytea")
 	private String email;
 
-	@ColumnTransformer(read = "pgp_sym_decrypt(" + "    password, " + "    current_setting('vam.cerberus')"
-			+ ")", write = "pgp_sym_encrypt( " + "    ?, " + "    current_setting('vam.cerberus')" + ") ")
+	@ColumnTransformer(read = "pgp_sym_decrypt(" + "    password, " + "    current_setting('encrypt.key')"
+			+ ")", write = "pgp_sym_encrypt( " + "    ?, " + "    current_setting('encrypt.key')" + ") ")
 	@Column(columnDefinition = "bytea")
 	@Length(min = 8)
 	private String password;
