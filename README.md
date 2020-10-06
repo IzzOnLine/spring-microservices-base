@@ -82,18 +82,7 @@ On the other hand, there are other "important folders":
 * **dto** custom objects to contain specific data.
 <br><br>
 
-To use the encryption in postgres database you have to enable the pgcrypto extension and set the key in the postgresql.conf file see [Previous steps](#previous-steps)
-To test the login you have to insert a user first:
-```
-INSERT INTO public."user" (id, name, active, password, username, deleted, role )
-VALUES (1, 
-        pgp_sym_encrypt('Administrator',  current_setting('encrypt.key')),
-		    true,
-		    pgp_sym_encrypt('{bcrypt}$2a$10$qTOh9o5HxlXY6jM724XcrOV.mWhOyD3/.V7vuCOwnszwiLrj8wCCO',  current_setting('encrypt.key')),
-		    pgp_sym_encrypt('admin',  current_setting('encrypt.key')),
-		    false,
-	      'ROLE_ADMIN');
-```
+To use the encryption in postgres database you have to enable the pgcrypto extension and set the key in the postgresql.conf file see [Previous steps](#previous-steps) to test the login you have to insert a user first
 
 ### microservice
 
@@ -191,6 +180,65 @@ After the extension is enabled we have to set the encryption key in the postgres
 ```
 encrypt.key = 'Wow! So much security.'
 ```
+We need also create the database tables that serves our application:
+
+```
+create schema security;
+
+create table security.oauth_client_details (
+  client_id                 varchar(64)     constraint oauth_client_details_pk primary key,
+  resource_ids              varchar(256),
+  client_secret             varchar(128)    not null,
+  scope                     varchar(256),
+  authorized_grant_types    varchar(256),
+  web_server_redirect_uri   varchar(256),
+  authorities               varchar(256),
+  access_token_validity     int             not null,
+  refresh_token_validity    int             not null,
+  additional_information    text,
+  autoapprove               varchar(256)
+);
+
+CREATE TABLE "security"."user" (
+	id int4 NOT NULL,
+	created_by varchar(255) NULL,
+	creation_date timestamp NULL,
+	deleted bool NOT NULL,
+	last_update timestamp NULL,
+	modified_by varchar(255) NULL,
+	active bool NULL DEFAULT false,
+	email bytea NULL,
+	"name" bytea NULL,
+	"password" bytea NULL,
+	"role" varchar(255) NULL,
+	secret bytea NULL,
+	two_fa_enabled bool NULL DEFAULT false,
+	username bytea NULL,
+	CONSTRAINT uk_sb8bbouer5wak8vyiiy4pf2bx UNIQUE (username),
+	CONSTRAINT user_pkey PRIMARY KEY (id)
+);
+
+INSERT INTO security.oauth_client_details (client_id, client_secret
+                                          ,scope, authorized_grant_types
+                                          ,web_server_redirect_uri, authorities
+                                          ,access_token_validity, refresh_token_validity
+                                          ,additional_information, autoapprove)
+VALUES ('Spring5Microservices', '{bcrypt}$2a$10$NlKX/TyTk41qraDjxg98L.xFdu7IQYRoi3Z37PZmjekaQYAeaRZgO'   -- Raw password: Spring5Microservices
+       ,'read,write,trust', 'implicit,refresh_token,password,authorization_code,client_credentials,mfa'
+       ,null, null
+       ,900, 3600
+       ,null, true);
+
+INSERT INTO "security"."user" (id, name, active, password, username, deleted, role )
+VALUES (1, 
+        pgp_sym_encrypt('Administrator',  current_setting('encrypt.key')),
+		    true,
+		    pgp_sym_encrypt('{bcrypt}$2a$10$qTOh9o5HxlXY6jM724XcrOV.mWhOyD3/.V7vuCOwnszwiLrj8wCCO',  current_setting('encrypt.key')),
+		    pgp_sym_encrypt('admin',  current_setting('encrypt.key')),
+		    false,
+	      'ROLE_ADMIN');
+```
+
 Once we have finished, it will be necessary to run the following services (following the displayed ordination):
 
 1. **registry-server**
