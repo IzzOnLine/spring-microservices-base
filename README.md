@@ -82,15 +82,15 @@ On the other hand, there are other "important folders":
 * **dto** custom objects to contain specific data.
 <br><br>
 
-To use the encryption in postgres database you have to enable the pgcrypto extension and set the key in the postgresql.conf file
+To use the encryption in postgres database you have to enable the pgcrypto extension and set the key in the postgresql.conf file see [Previous steps](#previous-steps)
 To test the login you have to insert a user first:
 ```
 INSERT INTO public."user" (id, name, active, password, username, deleted, role )
 VALUES (1, 
-        pgp_sym_encrypt('Administrator',  current_setting('vam.cerberus')),
+        pgp_sym_encrypt('Administrator',  current_setting('encrypt.key')),
 		    true,
-		    pgp_sym_encrypt('{bcrypt}$2a$10$qTOh9o5HxlXY6jM724XcrOV.mWhOyD3/.V7vuCOwnszwiLrj8wCCO',  current_setting('vam.cerberus')),
-		    pgp_sym_encrypt('admin',  current_setting('vam.cerberus')),
+		    pgp_sym_encrypt('{bcrypt}$2a$10$qTOh9o5HxlXY6jM724XcrOV.mWhOyD3/.V7vuCOwnszwiLrj8wCCO',  current_setting('encrypt.key')),
+		    pgp_sym_encrypt('admin',  current_setting('encrypt.key')),
 		    false,
 	      'ROLE_ADMIN');
 ```
@@ -153,7 +153,7 @@ If you receive some errors related with encryption like:
 IllegalStateException: Cannot decrypt: ...
 ```
 
-Please, take a look to the previous steps in this section, maybe one of them is missing. If you still see same error messages, the best way to solve it is changing the
+Probably you have not set the ENCRYPT_KEY=ENCRYPT_KEY environment variable. Please, take a look to the previous steps in this section, maybe one of them is missing. If you still see same error messages, the best way to solve it is changing the
 "cipher values" added in the microservices configuration files included in: 
 
 * [spring-microservices-configurations](https://github.com/IzzOnLine/spring-microservices-configurations)
@@ -182,15 +182,22 @@ To do it:
 
 ## How to use it?
 
-The first step is adding in our databases: `main` and `test` ones, the SQL files included in the `sql` folder. Once we have finished, it will be necessary to run the following
-services (following the displayed ordination):
+We first need to enable the pgcrypto extension. For this purpose, we need to execute the following statement:
+```
+CREATE EXTENSION pgcrypto;
+```
+The pgcrypto will allow us to use the pgp_sym_encrypt and pgp_sym_decrypt functions.
+After the extension is enabled we have to set the encryption key in the postgresql.conf configuration file adding:
+```
+encrypt.key = 'Wow! So much security.'
+```
+Once we have finished, it will be necessary to run the following services (following the displayed ordination):
 
 1. **registry-server**
 2. **config-server**
 3. **gateway-server**
 4. **security-oauth-service** 
-
-And finally any of the other
+5. **microservice** 
 
 
 
