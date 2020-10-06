@@ -1,0 +1,85 @@
+version: "3.8"
+services:
+    db:
+        container_name: yeet-postgres
+        image: postgres
+        ports:
+            - "5433:5432"
+        volumes:
+            - db-data:/var/lib/postgresql/data
+        environment:            
+            - POSTGRES_DB=postgres
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+        networks:
+            - testnetwork
+
+    eureka:
+        container_name: eureka
+        build: ./registry-server
+        image: "registryservice"
+        ports:
+            - "8761:8761"
+        networks:
+            - testnetwork
+            
+    config:
+        container_name: config    
+        build: ./config-server
+        image: "configservice"
+        ports:
+            - "8888:8888"
+        networks:
+            - testnetwork
+        depends_on:
+            - eureka
+        environment:
+            - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:8761/eureka/
+            
+    gateway:
+        container_name: gateway    
+        build: ./gateway-server
+        image: "gatewayservice"
+        ports:
+            - "5555:5555"
+        networks:
+            - testnetwork
+        environment:
+            ENCRYPT_KEY: ENCRYPT_KEY
+        depends_on:
+            - config
+        environment:
+            - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:8761/eureka/
+            
+    oauth:
+        container_name: oauth   
+        build: ./security-oauth-service
+        image: "oauthservice"
+        ports:
+            - "8901:8901"
+        networks:
+            - testnetwork
+        environment:
+            ENCRYPT_KEY: ENCRYPT_KEY
+        depends_on:
+            - db
+            - config
+        environment:
+            - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:8761/eureka/
+            
+        
+#    cyberexposure:
+#        build: ./cyber-exposure-service
+ #       image: "testcyberexposure"
+  #      ports:
+   #         - "8081:8081"
+    #    networks:
+     #       - testnetwork
+
+networks:
+    testnetwork:
+        driver: bridge
+        
+volumes:
+  db-data:
+    name: postgres-volume        

@@ -1,0 +1,25 @@
+# IMPORTANT: Stop config-server when you want to execute the tests
+spring:
+  ## Spring DATASOURCE (DataSourceAutoConfiguration & DataSourceProperties)
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/microservice_test
+    username: microservice_test
+    password: microservice_test
+  jooq:
+    sql-dialect: POSTGRES_9_5
+
+security:
+  restApi:
+    authenticationInformation: OnlyToAvoidAFailureLoadingConfigurationClass
+    clientId: TestClient
+    clientPassword: TestPassword
+
+springfox:
+  documentation:
+    apiVersion: 1.0
+    title: Test Rest Api
+    description: Test description
+    swagger:
+      v2:
+        path: onlyForTests

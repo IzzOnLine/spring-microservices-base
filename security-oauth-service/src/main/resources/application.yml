@@ -1,0 +1,43 @@
+server:
+  port: 8901
+
+eureka:
+  client:
+    # Pull down a local copy of the registry
+    fetchRegistry: true
+    healthcheck:
+      enabled: true
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    # Register the IP of the service rather than the server name (useful when there is no a
+    # server-based environment where a service is assigned a DNS-backed host name, usually in Docker for example)
+    preferIpAddress: true
+    
+spring:
+  ## Spring DATASOURCE (DataSourceAutoConfiguration & DataSourceProperties)
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    # Using environment variable ENCRYPT_KEY=ENCRYPT_KEY
+    # Getting the value with POST localhost:8888/encrypt and the password in its body
+    # Raw password: postgres
+    password: "{cipher}b35012a35e4c726c9eea32f4aa5b86bca360fa8c1474f61d4762699f94e1ce5a"
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+          lob:
+            non_contextual_creation: true
+        current_session_context_class: thread
+        format_sql: true
+        order_by.default_null_ordering: last
+      
+      
+ 

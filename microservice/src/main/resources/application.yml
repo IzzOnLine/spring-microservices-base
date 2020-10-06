@@ -1,0 +1,31 @@
+server:
+  port: 8081
+
+eureka:
+  client:
+    # Pull down a local copy of the registry
+    fetchRegistry: true
+    healthcheck:
+      enabled: true
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    # Register the IP of the service rather than the server name (useful when there is no a
+    # server-based environment where a service is assigned a DNS-backed host name, usually in Docker for example)
+    preferIpAddress: true
+
+springfox:
+  documentation:
+    apiVersion: 1.0
+    title: Cyber Exposure Client Rest Api
+    description: Client interface of Namirial Cyber Exposure API
+    swagger:
+      v2:
+        # Api docs path properties
+        path: /cyber-exposure-service/v2/api-docs
+ 
+ 
+logging:
+ level:
+  it.izzonline.microservice.controller.MicroserviceController: DEBUG
