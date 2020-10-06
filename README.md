@@ -1,4 +1,4 @@
-# YEET MICROSERVICES
+# MICROSERVICES
 
 - [registry-server](#registry-server)
 - [config-server](#config-server)
