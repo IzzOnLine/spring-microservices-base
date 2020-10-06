@@ -218,6 +218,34 @@ CREATE TABLE "security"."user" (
 	CONSTRAINT user_pkey PRIMARY KEY (id)
 );
 
+CREATE TABLE "security"."user" (
+	id int4 NOT NULL,
+	created_by varchar(255) NULL,
+	creation_date timestamp NULL,
+	deleted bool NOT NULL,
+	last_update timestamp NULL,
+	modified_by varchar(255) NULL,
+	active bool NULL DEFAULT false,
+	email bytea NULL,
+	"name" bytea NULL,
+	"password" bytea NULL,
+	"role" varchar(255) NULL,
+	secret bytea NULL,
+	two_fa_enabled bool NULL DEFAULT false,
+	username bytea NULL,
+	CONSTRAINT uk_sb8bbouer5wak8vyiiy4pf2bx UNIQUE (username),
+	CONSTRAINT user_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE "security".user_role (
+	user_id int4 NOT NULL,
+	role_id int4 NOT NULL,
+	CONSTRAINT user_role_pkey PRIMARY KEY (user_id, role_id)
+);
+
+ALTER TABLE "security".user_role ADD CONSTRAINT fk41vliann881wotgtfpxxvtdxc FOREIGN KEY (user_id) REFERENCES security."user"(id);
+ALTER TABLE "security".user_role ADD CONSTRAINT fka68196081fvovjhkek5m97n3y FOREIGN KEY (role_id) REFERENCES security.role(id);
+
 INSERT INTO security.oauth_client_details (client_id, client_secret
                                           ,scope, authorized_grant_types
                                           ,web_server_redirect_uri, authorities
@@ -237,6 +265,11 @@ VALUES (1,
 		    pgp_sym_encrypt('admin',  current_setting('encrypt.key')),
 		    false,
 	      'ROLE_ADMIN');
+	      
+insert into "security"."role" values(1,'ROLE_ADMIN');
+insert into "security"."role" values(2,'ROLE_USER');
+insert into "security"."user_role" values(1,1);
+insert into "security"."user_role" values(1,2);
 ```
 
 Once we have finished, it will be necessary to run the following services (following the displayed ordination):
