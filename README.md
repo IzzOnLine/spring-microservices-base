@@ -199,6 +199,25 @@ create table security.oauth_client_details (
   autoapprove               varchar(256)
 );
 
+CREATE TABLE "security"."user" (
+	id int4 NOT NULL,
+	created_by varchar(255) NULL,
+	creation_date timestamp NULL,
+	deleted bool NOT NULL,
+	last_update timestamp NULL,
+	modified_by varchar(255) NULL,
+	active bool NULL DEFAULT false,
+	email bytea NULL,
+	"name" bytea NULL,
+	"password" bytea NULL,
+	"role" varchar(255) NULL,
+	secret bytea NULL,
+	two_fa_enabled bool NULL DEFAULT false,
+	username bytea NULL,
+	CONSTRAINT uk_sb8bbouer5wak8vyiiy4pf2bx UNIQUE (username),
+	CONSTRAINT user_pkey PRIMARY KEY (id)
+);
+
 INSERT INTO security.oauth_client_details (client_id, client_secret
                                           ,scope, authorized_grant_types
                                           ,web_server_redirect_uri, authorities
@@ -210,7 +229,7 @@ VALUES ('Spring5Microservices', '{bcrypt}$2a$10$NlKX/TyTk41qraDjxg98L.xFdu7IQYRo
        ,900, 3600
        ,null, true);
 
-INSERT INTO public."user" (id, name, active, password, username, deleted, role )
+INSERT INTO "security"."user" (id, name, active, password, username, deleted, role )
 VALUES (1, 
         pgp_sym_encrypt('Administrator',  current_setting('encrypt.key')),
 		    true,
