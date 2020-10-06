@@ -27,7 +27,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "\"user\"")
+@Table(name = "\"user\"", schema = "\"security\"")
 @Loader(namedQuery = "findUserById")
 @NamedQuery(name = "findUserById", query = "SELECT u " + "from User u " + "WHERE " + "  u.id = ?1 order by u.id")
 @SQLDelete(sql = "UPDATE \"user\" " + "SET deleted = true, last_update = now() "

@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
+import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.provider.ClientDetails;
@@ -114,12 +115,12 @@ public class MfaTokenGranter extends AbstractTokenGranter {
 		OAuth2Request clientAuth = authentication.getOAuth2Request().refresh(request);
 		if (scope != null && !scope.isEmpty()) {
 			Set<String> originalScope = clientAuth.getScope();
-			// FIXME uncomment after there is a resolution here:
+			// FIXME comment/uncomment if there is a solution see here:
 			// https://sultanov.dev/blog/multi-factor-authentication-with-spring-boot-and-oauth2/
-//			if (originalScope == null || !originalScope.containsAll(scope)) {
-//				throw new InvalidScopeException(
-//						"Unable to narrow the scope of the client authentication to " + scope + ".", originalScope);
-//			}
+			if (originalScope == null || !originalScope.containsAll(scope)) {
+				throw new InvalidScopeException(
+						"Unable to narrow the scope of the client authentication to " + scope + ".", originalScope);
+			}
 
 			clientAuth = clientAuth.narrowScope(scope);
 		}
