@@ -6,7 +6,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 
 import it.izzonline.securityoauthservice.configuration.rest.RestRoutes.SECURITY_CONTROLLER;
-import it.izzonline.securityoauthservice.model.Role;
+import it.izzonline.securityoauthservice.model.RoleEnum;
 
 @EnableResourceServer
 @Configuration
@@ -16,10 +16,8 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 	public void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable();
 		http.headers().frameOptions().disable();
-		http.authorizeRequests().antMatchers(SECURITY_CONTROLLER.ROOT + "/api/**").hasAnyAuthority(Role.Code.ROLE_ADMIN,
-				Role.Code.ROLE_VULNERABILITY_MANAGER, Role.Code.ROLE_VULNERABILITY_OWNER, Role.Code.ROLE_AUDIT,
-				Role.Code.ROLE_ASSESSMENT);
-
+		http.authorizeRequests().antMatchers(SECURITY_CONTROLLER.ROOT + "/api/**")
+				.hasAnyAuthority(RoleEnum.ROLE_ADMIN.name(), RoleEnum.ROLE_USER.name());
 	}
 
 }

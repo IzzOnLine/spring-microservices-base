@@ -1,13 +1,21 @@
 package it.izzonline.securityoauthservice.model;
 
-import java.util.Arrays;
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toSet;
+
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -19,6 +27,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.Getter;
@@ -69,7 +78,9 @@ public class User extends BasicEntity implements UserDetails {
 	@Length(min = 8)
 	private String password;
 
-	private String role;
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(schema = "\"security\"", name = "user_role", inverseJoinColumns = { @JoinColumn(name = "role_id") })
+	private Set<Role> roles;
 
 	@Column(columnDefinition = "boolean default false")
 	private boolean twoFaEnabled = false;
@@ -77,9 +88,16 @@ public class User extends BasicEntity implements UserDetails {
 	@Column(columnDefinition = "boolean default false")
 	private boolean active = false;
 
+	/**
+	 * Get {@link Role} and add them to a {@link Set} of {@link GrantedAuthority}
+	 *
+	 * @return {@link Set} of {@link GrantedAuthority}
+	 */
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return Arrays.asList(Role.valueOf(role));
+		return ofNullable(roles).map(
+				rList -> rList.stream().map(r -> new SimpleGrantedAuthority(r.getName().toString())).collect(toSet()))
+				.orElse(new HashSet<>());
 	}
 
 	@Override

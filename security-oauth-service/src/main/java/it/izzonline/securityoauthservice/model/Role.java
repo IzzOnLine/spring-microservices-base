@@ -1,37 +1,41 @@
 package it.izzonline.securityoauthservice.model;
 
-import org.springframework.security.core.GrantedAuthority;
+import java.io.Serializable;
 
-public enum Role implements GrantedAuthority {
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
-	ROLE_ADMIN(Code.ROLE_ADMIN), ROLE_VULNERABILITY_MANAGER(Code.ROLE_VULNERABILITY_MANAGER),
-	ROLE_VULNERABILITY_OWNER(Code.ROLE_VULNERABILITY_OWNER), ROLE_AUDIT(Code.ROLE_AUDIT),
-	ROLE_ASSESSMENT(Code.ROLE_ASSESSMENT), ROLE_ANONYMOUS(Code.ROLE_ANONYMOUS);
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
-	private final String authority;
+@AllArgsConstructor
+@Builder
+@Data
+@Entity
+@EqualsAndHashCode(of = { "name" })
+@NoArgsConstructor
+@Table(schema = "\"security\"")
+public class Role implements Serializable {
 
-	Role(String authority) {
-		this.authority = authority;
-	}
+	private static final long serialVersionUID = 4833183317359581882L;
 
-	@Override
-	public String getAuthority() {
-		return authority;
-	}
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "role_generator")
+	@SequenceGenerator(name = "role_generator", sequenceName = "role_seq", allocationSize = 1)
+	private Integer id;
 
-	public class Code {
-		public static final String ROLE_ADMIN = "ROLE_ADMIN";
-		public static final String ROLE_VULNERABILITY_MANAGER = "ROLE_VULNERABILITY_MANAGER";
-		public static final String ROLE_VULNERABILITY_OWNER = "ROLE_VULNERABILITY_OWNER";
-		public static final String ROLE_ASSESSMENT = "ROLE_ASSESSMENT";
-		public static final String ROLE_AUDIT = "ROLE_AUDIT";
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	private RoleEnum name;
 
-		public static final String ROLE_ANONYMOUS = "ROLE_ANONYMOUS";
-
-		public static final String IS_AUTHENTICATED_FULLY = "IS_AUTHENTICATED_FULLY";
-
-		public static final String ROLE_HIERARCHY = Role.Code.ROLE_ADMIN + " > " + Role.Code.ROLE_VULNERABILITY_MANAGER
-				+ " > " + Role.Code.ROLE_VULNERABILITY_OWNER + " > " + Role.Code.ROLE_AUDIT + " > "
-				+ Role.Code.ROLE_ASSESSMENT;
-	}
 }
