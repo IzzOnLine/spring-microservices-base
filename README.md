@@ -218,25 +218,6 @@ CREATE TABLE "security"."user" (
 	CONSTRAINT user_pkey PRIMARY KEY (id)
 );
 
-CREATE TABLE "security"."user" (
-	id int4 NOT NULL,
-	created_by varchar(255) NULL,
-	creation_date timestamp NULL,
-	deleted bool NOT NULL,
-	last_update timestamp NULL,
-	modified_by varchar(255) NULL,
-	active bool NULL DEFAULT false,
-	email bytea NULL,
-	"name" bytea NULL,
-	"password" bytea NULL,
-	"role" varchar(255) NULL,
-	secret bytea NULL,
-	two_fa_enabled bool NULL DEFAULT false,
-	username bytea NULL,
-	CONSTRAINT uk_sb8bbouer5wak8vyiiy4pf2bx UNIQUE (username),
-	CONSTRAINT user_pkey PRIMARY KEY (id)
-);
-
 CREATE TABLE "security".user_role (
 	user_id int4 NOT NULL,
 	role_id int4 NOT NULL,
