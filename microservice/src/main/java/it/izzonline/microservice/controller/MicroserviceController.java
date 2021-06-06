@@ -12,14 +12,20 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @Slf4j
 @RequestMapping("/microservice/api/x")
-@Api("Cyber Exposure Controller")
+@Api("Microservice Controller")
 public class MicroserviceController {
 
 	@PreAuthorize("hasRole('ROLE_USER')")
 	// @RoleAdminOrUser
-	@GetMapping("/")
-	public void test(Authentication authentication) {
-		log.debug("CYBER EXPOSURE SERVICE WORKS -------------------------");
+	@GetMapping("/a")
+	public void testA(Authentication authentication) {
+		log.debug("TEST A -------------------------");
+	}
+	
+	@PreAuthorize("hasRole('ROLE_PIPPO')")
+	@GetMapping("/b")
+	public void testB(Authentication authentication) {
+		log.debug("TEST B -------------------------");
 	}
 
 }
