@@ -180,12 +180,39 @@ After the extension is enabled we have to set the encryption key in the postgres
 ```
 encrypt.key = 'Wow! So much security.'
 ```
-We need also create the database tables that serves our application:
+We need also create the database tables that serves our application, in order to do this the first step is to run these sql:
 
 ```
 create schema security;
 
+create table security.oauth_client_details (
+  client_id                 varchar(64)     constraint oauth_client_details_pk primary key,
+  resource_ids              varchar(256),
+  client_secret             varchar(128)    not null,
+  scope                     varchar(256),
+  authorized_grant_types    varchar(256),
+  web_server_redirect_uri   varchar(256),
+  authorities               varchar(256),
+  access_token_validity     int             not null,
+  refresh_token_validity    int             not null,
+  additional_information    text,
+  autoapprove               varchar(256)
+);
 
+INSERT INTO security.oauth_client_details (client_id, client_secret
+                                          ,scope, authorized_grant_types
+                                          ,web_server_redirect_uri, authorities
+                                          ,access_token_validity, refresh_token_validity
+                                          ,additional_information, autoapprove)
+VALUES ('Spring5Microservices', '{bcrypt}$2a$10$NlKX/TyTk41qraDjxg98L.xFdu7IQYRoi3Z37PZmjekaQYAeaRZgO'   -- Raw password: Spring5Microservices
+       ,'read,write,trust', 'implicit,refresh_token,password,authorization_code,client_credentials,mfa'
+       ,null, null
+       ,900, 3600
+       ,null, true);
+```
+
+RUN THE APPLICATION THAT CREATES THE REST OF THE TABLES AND AFTER run the following insert: 
+```
 INSERT INTO "security"."user" (id, name, active, password, username, deleted )
 VALUES (1, 
         pgp_sym_encrypt('Administrator',  current_setting('encrypt.key')),
